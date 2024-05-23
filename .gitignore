@@ -1,1 +1,8 @@
+If you want to ignore all `.env` files within your repository and its subdirectories, you can use the following pattern in your `.gitignore` file:
+
+```gitignore
+# Ignore all .env files
 **/.env
+```
+
+This pattern will match all files named `.env` recursively within the repository's directory structure, effectively ignoring them. Make sure to save the `.gitignore` file and commit the changes to apply the ignore rules. After doing so, any `.env` files in the repository and its subdirectories should be ignored by Git.
