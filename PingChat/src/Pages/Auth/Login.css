@@ -1,0 +1,17 @@
+@keyframes snow-fall {
+  0% {
+    transform: translateY(-10vh);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.snowflake {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  animation: snow-fall linear infinite;
+}
