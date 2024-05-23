@@ -174,7 +174,7 @@ setInterval(async () => {
   } catch (error) {
     console.error("Error performing batch insertion or clearing cache:", error);
   }
-}, 5000);
+}, 10000);
 
 
 const addMessageToCache = async (username, message) => {
