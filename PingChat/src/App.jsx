@@ -7,7 +7,7 @@ import MainPanel from './Pages/MainPanel/MainPanel'
 import Login from './Pages/Auth/Login'
 
 function App() {
-  const api='http://localhost:4000';
+  const api='https://pingchat-1.onrender.com';
   const  [store,setStore]=useState()
   const [showSearchResult,setShowSearchResult]=useState(false)
   

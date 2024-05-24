@@ -26,7 +26,7 @@ export default function Login() {
   
           if (response.ok) {
               localStorage.setItem("username", username);
-              alert("Username stored in local storage");
+             
               setRedirectedToMainPanel(true);
           } else {
               alert(res.msg);
