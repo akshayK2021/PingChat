@@ -5,7 +5,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const GroupChatMessage = require("./dbSchema/GroupChatMessage");
 const OneOnOneChatMessage = require("./dbSchema/OneOnOneChatMessage");
-const Redis=require("ioredis")
+const Redis=require("ioredis");
+const Users = require("./dbSchema/Users");
 require("dotenv").config()
 const redisUrl=process.env.REDIS_URL
 
@@ -39,6 +40,7 @@ app.use(cors({
   origin: "*"
 }));
 
+app.use(express.json())
 mongoose.connect(`${process.env.DB_URL}`).then(() => {
   console.log("Connected to Mongodb");
 }).catch(err => {
@@ -174,7 +176,7 @@ setInterval(async () => {
   } catch (error) {
     console.error("Error performing batch insertion or clearing cache:", error);
   }
-}, 10000);
+}, 500);
 
 
 const addMessageToCache = async (username, message) => {
@@ -220,12 +222,45 @@ const addMessageToCache = async (username, message) => {
 
 
 
-
+app.post('/api/login',async(req,res)=>{
+  try{
+  console.log("Api is called and data",req.body)
+  const {username,password}=req.body
+  if (!username || !password) {
+    return res.status(400).json({
+        msg: "Username and password are required"
+    });
+}
+  const user=await Users.findOne({username});
+  if(user){
+    if(password===user.password){
+      return res.status(200).json({
+        msg:"Login Successfull"
+      })
+    }
+    else{
+      return res.status(401).json({
+        msg:"Incorrect password for given username or else choose different username"
+      })
+    }
+  }
+  else{
+   const user= await Users.create({username,password});
+   return res.status(200).json({
+    msg:"New User created"
+   })
+  }
+}
+catch(err){
+  console.log("error occured",err)
+}
+})
 
 app.get("/api/chat/:username", async (req, res) => {
   try {
     const username = req.params.username;
     console.log("username is", username);
+    
 
     // Check cache first
     cacheClient.get(username, async (err, cachedData) => {

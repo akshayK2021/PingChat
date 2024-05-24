@@ -1,24 +1,54 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { ChatContext } from "../../context/ChatContext";
 
 export default function Login() {
+  const {api}=useContext(ChatContext)
   const [username, setUsername] = useState("");
+  const [password,setPassword]=useState("");
   const [redirectTOMainPanel, setRedirectedToMainPanel] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (username.trim() !== "") {
-      localStorage.setItem("username", username);
-      alert("Username stored in local storage");
-      setRedirectedToMainPanel(true);
-    } else {
-      alert("Please enter a valid username");
-    }
+  const handleSubmit =async (event) => {
+    
+      event.preventDefault();
+  
+      try {
+          const response = await fetch(`${api}/api/login`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, password }),
+          });
+  
+          const res = await response.json();
+          console.log('Response is', res);
+  
+          if (response.ok) {
+              localStorage.setItem("username", username);
+              alert("Username stored in local storage");
+              setRedirectedToMainPanel(true);
+          } else {
+              alert(res.msg);
+          }
+      } catch (error) {
+          console.error('Error during login:', error);
+          alert('An error occurred. Please try again.');
+      } finally {
+          setUsername("");
+          setPassword("");
+      }
   };
+
 
   const handleChange = (event) => {
     setUsername(event.target.value);
   };
+
+  const handlePassChange=(event)=>{
+    setPassword(event.target.value)
+
+  }
 
   if (redirectTOMainPanel) {
     return <Navigate to="/mainPanel" />;
@@ -60,6 +90,18 @@ export default function Login() {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={username}
               onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="mb-2 text-lg font-medium text-gray-800" htmlFor="username">Password:</label>
+            <input
+              type="text"
+              id="password"
+              name="password"
+              placeholder="Enter your Password"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={password}
+              onChange={handlePassChange}
             />
           </div>
           <button type="submit" className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-105">
